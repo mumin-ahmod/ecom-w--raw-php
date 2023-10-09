@@ -45,12 +45,14 @@ if(isset($_SESSION['user_id'])){
       while($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)){
     ?>
   
-    <form action="" method="post" class="box">
+    <form action="cart.php" method="post" class="box">
       
       <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
       <input type="hidden" name="name" value="<?= $fetch_products['name']; ?>">
       <input type="hidden" name="price" value="<?= $fetch_products['price']; ?>">
       <input type="hidden" name="image" value="<?= $fetch_products['image_01']; ?>">
+
+
       
       <button class="fas fa-heart" type="submit" name="add_to_wishlist"></button>
       <a href="quick_view.php?pid=<?= $fetch_products['id']; ?>" class="fas fa-eye"></a>
@@ -61,7 +63,7 @@ if(isset($_SESSION['user_id'])){
       
       <div class="flex">
          <div class="price"><span>Tk </span><?= $fetch_products['price']; ?><span>/-</span></div>
-         <input type="number" name="qty" class="qty" min="1" max="99" onkeypress="if(this.value.length == 2) return false;" value="1">
+         <input type="number" name="quantity" class="qty" min="1" max="99" onkeypress="if(this.value.length == 2) return false;" value="1">
         </div>
       
         <input type="submit" value="add to cart" class="btn" name="add_to_cart" class="btn">

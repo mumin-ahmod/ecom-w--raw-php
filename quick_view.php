@@ -44,7 +44,7 @@ include 'components/wishlist_cart.php';
             while($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)){
         ?>
 
-        <form action="" method="post" class="box">
+        <form action="cart.php" method="post" class="box">
             
             <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
             <input type="hidden" name="name" value="<?= $fetch_products['name']; ?>">
@@ -74,7 +74,7 @@ include 'components/wishlist_cart.php';
                  <!--- Product price and quantity -->  
                  <div class="price"><span>Tk </span><?= $fetch_products['price']; ?>
                  <span>/-</span></div>
-                 <input class="qty" type="number" name="qty" min="1" max="99" onkeypress="if(this.value.length == 2) return false;" value="1">
+                 <input class="qty" type="number" name="quantity" min="1" max="99" onkeypress="if(this.value.length == 2) return false;" value="1">
                  
                 </div>
 
