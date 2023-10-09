@@ -7,7 +7,7 @@ if (isset($_SESSION['user_id'])) {
 } else {
     $user_id = '';
     header('location:home.php');
-    ///// Redirects to home page if the user is not logged in
+    ///// Redirects to the home page if the user is not logged in
 }
 
 // Handle the POST request from the "Add to Cart" button here
@@ -74,11 +74,6 @@ while ($row = $select_cart_items->fetch(PDO::FETCH_ASSOC)) {
             border: none;
             cursor: pointer;
         }
-
-        .payment-form {
-            display: none;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
@@ -92,115 +87,25 @@ while ($row = $select_cart_items->fetch(PDO::FETCH_ASSOC)) {
     <!-- Add your HTML content for the cart page here -->
     <div class="cart-items">
         <?php
-if (empty($cart_items)) {
-    echo "<p>Your cart is empty.</p>";
-} else {
-    foreach ($cart_items as $item) {
-        echo "<div class='card'>";
-        echo "<img src='" . $item['image'] . "' alt='" . $item['name'] . "'>";
-        echo "<h2>" . $item['name'] . "</h2>";
-        echo "<p>Price: $" . $item['price'] . "</p>";
-        echo "<p>Quantity: " . $item['quantity'] . "</p>";
-        echo "<button class='checkout-button' data-item-id='" . $item['id'] . "'>Checkout Now</button>";
-
-        // Add a payment form for each item with a unique data attribute
-        echo "<form class='payment-form' data-item-id='" . $item['id'] . "' method='post' action='checkout.php'>";
-        echo "Payment Form for " . $item['name'] . "<br>";
-        echo "<div class='form-group'>";
-        echo "<label for='card-element'>";
-        echo "Credit or debit card";
-        echo "</label>";
-        echo "<div id='card-element-" . $item['id'] . "'>";
-        echo "<!-- A Stripe Element will be inserted here. -->";
-        echo "</div>";
-        echo "<!-- Used to display form errors. -->";
-        echo "<div id='card-errors-" . $item['id'] . "' role='alert'></div>";
-        echo "</div>";
-        echo "<input type='hidden' name='item_id' value='" . $item['id'] . "'>";
-        echo "</form>";
-
-        // Add a "Pay" button for each payment form
-        echo "<button class='pay-button' data-item-id='" . $item['id'] . "'>Pay</button>";
-
-        echo "</div>";
-    }
-}
-?>
+        if (empty($cart_items)) {
+            echo "<p>Your cart is empty.</p>";
+        } else {
+            foreach ($cart_items as $item) {
+                echo "<div class='card'>";
+                echo "<img src='uploaded_img/" . $item['image'] . "' alt='" . $item['name'] . "'>";
+                echo "<h2>" . $item['name'] . "</h2>";
+                echo "<p>Price: $" . $item['price'] . "</p>";
+                echo "<p>Quantity: " . $item['quantity'] . "</p>";
+                echo "<a class='checkout-button' href='checkout.php?item_id=" . $item['id'] . "'>Checkout Now</a>";
+                echo "</div>";
+            }
+        }
+        ?>
     </div>
 
     <?php include 'components/footer.php';?>
 
-    <!-- Add your JavaScript code for handling the checkout button click event here -->
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        var stripe = Stripe('YOUR_PUBLISHABLE_KEY');
-        var elements = stripe.elements();
-
-        // Handle the checkout button click event for each item
-        var checkoutButtons = document.querySelectorAll('.checkout-button');
-
-        checkoutButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                var itemId = this.getAttribute('data-item-id');
-                var paymentForm = document.querySelector('.payment-form[data-item-id="' + itemId + '"]');
-                var cardElement = elements.create('card');
-                cardElement.mount('#card-element-' + itemId);
-                var form = paymentForm.querySelector('form');
-
-                // Toggle visibility of the payment form for this item
-                paymentForm.style.display = 'block';
-            });
-        });
-
-        // Handle the "Pay" button click event for each item
-        var payButtons = document.querySelectorAll('.pay-button');
-
-        payButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                var itemId = this.getAttribute('data-item-id');
-                var paymentForm = document.querySelector('.payment-form[data-item-id="' + itemId + '"]');
-                var cardElement = elements.create('card');
-                cardElement.mount('#card-element-' + itemId);
-                var form = paymentForm.querySelector('form');
-
-                // Serialize form data into a JSON object
-                var formData = new FormData(form);
-                var formDataObject = {};
-                formData.forEach(function (value, key) {
-                    formDataObject[key] = value;
-                });
-
-                stripe.createToken(cardElement).then(function (result) {
-                    if (result.error) {
-                        var errorElement = paymentForm.querySelector('#card-errors-' + itemId);
-                        errorElement.textContent = result.error.message;
-                    } else {
-                        // Add the token to the form data
-                        formDataObject['token'] = result.token.id;
-
-                        // Send the form data to your server to charge the user.
-                        fetch('checkout.php', {
-                            method: 'POST',
-                            body: JSON.stringify(formDataObject),
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        })
-                        .then(function (response) {
-                            return response.json();
-                        })
-                        .then(function (data) {
-                            // Handle the response from your server (e.g., show a success message).
-                            console.log(data);
-                            alert('Payment Successful');
-
-                            // Redirect the user to a thank you page or another appropriate page
-                            window.location.href = 'thank_you.php';
-                        });
-                    }
-                });
-            });
-        });
-    </script>
+    <!--- JS Link -->
+    <script src="js/script.js"></script>
 </body>
 </html>

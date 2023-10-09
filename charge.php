@@ -6,10 +6,11 @@ $stripeSecretKey = 'sk_test_51NzCHGSJmr02EggBN6weavUpUYecY3QjuSQ2gM6myCdL6CCA6BX
 \Stripe\Stripe::setApiKey($stripeSecretKey);
 
 $token = $_POST['token'];
+$amount = $_POST['amount']; // Get the amount from the checkout page
 
 try {
     $charge = \Stripe\Charge::create([
-        'amount' => 1000, // Amount in cents (adjust as needed)
+        'amount' => $amount,
         'currency' => 'usd',
         'description' => 'Payment for goods or services',
         'source' => $token,
