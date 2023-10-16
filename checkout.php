@@ -27,13 +27,6 @@ if (isset($_GET['item_id'])) {
     // Handle the case where the item_id query parameter is not provided
     header('location:cart.php');
 }
-
-// Initialize payment status as false
-$paymentSuccessful = false;
-
-if (isset($_POST['payment_status']) && $_POST['payment_status'] === 'success') {
-    $paymentSuccessful = true;
-}
 ?>
 
 <!DOCTYPE html>
@@ -77,26 +70,25 @@ if (isset($_POST['payment_status']) && $_POST['payment_status'] === 'success') {
         </div>
 
         <!-- Payment form -->
-        <form id="payment-form" class="mt-3">
-            <label for="card-element">
-                Credit or debit card
-            </label>
-            <div id="card-element" class="form-control">
-                <!-- A Stripe Element will be inserted here. -->
-            </div>
-            <!-- Used to display form errors. -->
-            <div id="card-errors" role="alert"></div>
+      <!-- Include the amount field inside the form -->
+<form id="payment-form" class="mt-3">
+    <label for="card-element">
+        Credit or debit card
+    </label>
+    <div id="card-element" class="form-control">
+        <!-- A Stripe Element will be inserted here. -->
+    </div>
+    <!-- Used to display form errors. -->
+    <div id="card-errors" role="alert"></div>
 
-            <!-- Include the amount field -->
-            <input type="hidden" name="amount" value="<?php echo $item['price'] * 100; ?>"> <!-- Adjust the amount as needed and multiply by 100 to convert to cents -->
+    <!-- Include the amount field -->
+    <input type="hidden" name="amount" value="<?php echo $item['price'] * 100; ?>"> <!-- Adjust the amount as needed and multiply by 100 to convert to cents -->
 
-            <button id="submit-button" class="btn btn-primary mt-3">Pay Now</button>
-        </form>
+    <button id="submit-button" class="btn btn-primary mt-3">Pay Now</button>
+</form>
 
-        <!-- Show the "Save Order" button if payment is successful -->
-        <?php if ($paymentSuccessful): ?>
-            <button class="btn btn-success mt-3">Save Order</button>
-        <?php endif; ?>
+<button id="submit-button" class="btn btn-info mt-3">Save Order</button>
+
     </div>
 
     <!-- Add Bootstrap JS and jQuery links here -->
@@ -146,10 +138,7 @@ if (isset($_POST['payment_status']) && $_POST['payment_status'] === 'success') {
                             console.log(data);
                             alert('Payment Successful');
 
-                            // Show the "Save Order" button on successful payment
-                            if (data.status === 'success') {
-                                document.getElementById('save-order-button').style.display = 'block';
-                            }
+                           
                         });
                 }
             });

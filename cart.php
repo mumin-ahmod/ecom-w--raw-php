@@ -87,25 +87,63 @@ while ($row = $select_cart_items->fetch(PDO::FETCH_ASSOC)) {
     <!-- Add your HTML content for the cart page here -->
     <div class="cart-items">
         <?php
-        if (empty($cart_items)) {
-            echo "<p>Your cart is empty.</p>";
-        } else {
-            foreach ($cart_items as $item) {
-                echo "<div class='card'>";
-                echo "<img src='uploaded_img/" . $item['image'] . "' alt='" . $item['name'] . "'>";
-                echo "<h2>" . $item['name'] . "</h2>";
-                echo "<p>Price: $" . $item['price'] . "</p>";
-                echo "<p>Quantity: " . $item['quantity'] . "</p>";
-                echo "<a class='checkout-button' href='checkout.php?item_id=" . $item['id'] . "'>Checkout Now</a>";
-                echo "</div>";
-            }
-        }
-        ?>
+if (empty($cart_items)) {
+    echo "<p>Your cart is empty.</p>";
+} else {
+    foreach ($cart_items as $item) {
+        echo "<div class='card'>";
+        echo "<img src='uploaded_img/" . $item['image'] . "' alt='" . $item['name'] . "'>";
+        echo "<h2>" . $item['name'] . "</h2>";
+        echo "<p>Price: $" . $item['price'] . "</p>";
+        echo "<p>Quantity: " . $item['quantity'] . "</p>";
+        // Add a "Delete" button for each item with a link to delete_from_cart.php
+        echo "<a class='btn btn-info btn-sm' href='delete_from_cart.php?item_id=" . $item['id'] . "'>Delete</a>";
+        echo " <br>";
+        echo "<a class='checkout-button' href='checkout.php?item_id=" . $item['id'] . "'>Checkout Now</a>";
+        echo "</div>";
+    }
+}
+?>
     </div>
 
     <?php include 'components/footer.php';?>
 
     <!--- JS Link -->
     <script src="js/script.js"></script>
+
+<script>
+    // Add a click event listener for all "Delete from Cart" buttons
+    const deleteButtons = document.querySelectorAll('.delete-from-cart-button');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            // Get the item ID from the data attribute
+            const itemId = button.getAttribute('data-item-id');
+
+            // Send a request to delete the item from the cart using AJAX
+            fetch('delete_from_cart.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ itemId: itemId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Item was successfully deleted, remove the card element from the page
+                    const card = button.closest('.card');
+                    card.remove();
+                } else {
+                    // Handle the deletion error, show an alert or error message
+                    alert('Failed to delete item from the cart.');
+                }
+            })
+            .catch(error => {
+                // Handle any network or request errors
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
 </body>
 </html>
